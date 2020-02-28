@@ -1,0 +1,34 @@
+airflow:
+  image:
+    repository: airflow-docker-local
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+  webReplicas: 1
+  executor: Kubernetes 
+  config:
+    AIRFLOW__CORE__LOGGING_LEVEL: INFO
+    AIRFLOW__CORE__LOAD_EXAMPLES: False
+    AIRFLOW__WEBSERVER__WORKERS: 1
+    AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY: airflow-docker-local
+    AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG: latest
+    AIRFLOW__KUBERNETES__WORKER_CONTAINER_IMAGE_PULL_POLICY: Never
+    
+    AIRFLOW__KUBERNETES__WORKER_SERVICE_ACCOUNT_NAME: airflow
+    AIRFLOW__KUBERNETES__DAGS_VOLUME_CLAIM: airflow
+
+  variables:
+    environment: "dev"
+  pools:
+    example:
+      description: "This is an example of a pool"
+      slots: 1
+workers:
+  replicas: 1
+  celery:
+    instances: 1
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 1Gi
